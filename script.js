@@ -371,6 +371,23 @@ function handleAnalysisRequest(requestedPipeline) {
  * @param {string} mediaType - 'video' or 'audio'
  * @returns {Promise<Object>} Detection results from your model
  */
+/**
+ * Helper to retrieve Django CSRF token from DOM meta/input or cookie.
+ * Ensures seamless compatibility with Django's CsrfViewMiddleware.
+ */
+function getCsrfToken() {
+  const metaTag = document.querySelector('meta[name="csrf-token"]');
+  if (metaTag && metaTag.content && !metaTag.content.startsWith('{{')) {
+    return metaTag.content;
+  }
+  const inputTag = document.querySelector('input[name="csrfmiddlewaretoken"]');
+  if (inputTag && inputTag.value && !inputTag.value.startsWith('{%')) {
+    return inputTag.value;
+  }
+  const match = document.cookie.match(/(?:^|; )csrftoken=([^;]+)/);
+  return match ? decodeURIComponent(match[1]) : '';
+}
+
 async function analyzeMediaWithBackend(file, mediaType) {
   // If backend connection is not configured, inform the caller
   if (!API_CONFIG.isConnected) {
@@ -389,8 +406,17 @@ async function analyzeMediaWithBackend(file, mediaType) {
   formData.append('media_file', file);
   formData.append('media_type', mediaType);
 
+  // Attach Django CSRF token if present
+  const csrfToken = getCsrfToken();
+  const headers = {};
+  if (csrfToken) {
+    formData.append('csrfmiddlewaretoken', csrfToken);
+    headers['X-CSRFToken'] = csrfToken;
+  }
+
   const response = await fetch(endpoint, {
     method: 'POST',
+    headers: headers,
     body: formData
   });
 

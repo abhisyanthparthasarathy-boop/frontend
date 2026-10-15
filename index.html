@@ -1,19 +1,23 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token }}">
   <meta name="description" content="SPECULUM — Media Authenticity Intelligence. Examine audio and video for signs of AI-generated or manipulated content with ethical, transparent forensic reporting.">
-  <title>SPECULUM — Media Authenticity Intelligence</title>
+  <title>{% block title %}SPECULUM — Media Authenticity Intelligence{% endblock title %}</title>
   
   <!-- Typography: Google Fonts (Editorial Serif + Modern Clean Sans + Mono) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="{% static 'style.css' %}">
+  {% block extra_css %}{% endblock extra_css %}
 </head>
 <body>
+  {% csrf_token %}
   <!-- Header / Navigation Bar -->
   <header class="site-header" id="siteHeader">
     <div class="header-container">
@@ -67,6 +71,7 @@
     </div>
   </header>
 
+  {% block content %}
   <main class="main-content" id="mainContent">
     <div class="content-wrapper">
       
@@ -548,11 +553,11 @@
         </div>
         <div class="guide-body hidden" id="guideBody">
           <p class="guide-desc">
-            To connect your Python Flask / FastAPI deepfake detection model, open <code>script.js</code> and locate the function <code>analyzeMediaWithBackend(file, mediaType)</code>. Set <code>API_CONFIG.isConnected = true</code> or configure your local server URL:
+            To connect your Python Django / FastAPI / Flask deepfake detection model, open <code>script.js</code> and locate the function <code>analyzeMediaWithBackend(file, mediaType)</code>. Set <code>API_CONFIG.isConnected = true</code> or configure your local server URL:
           </p>
           <pre class="code-preview"><code>// In script.js:
 const API_CONFIG = {
-  baseUrl: 'http://localhost:8000', // e.g. FastAPI / Flask endpoint
+  baseUrl: 'http://localhost:8000', // e.g. Django / FastAPI / Flask endpoint
   isConnected: false,               // Switch to true when your server is running
   endpoints: {
     video: '/api/detect/video',
@@ -564,6 +569,7 @@ const API_CONFIG = {
 
     </div>
   </main>
+  {% endblock content %}
 
   <!-- Site Footer -->
   <footer class="site-footer">
@@ -582,6 +588,7 @@ const API_CONFIG = {
   </footer>
 
   <!-- Link Vanilla JS -->
-  <script src="script.js"></script>
+  <script src="{% static 'script.js' %}"></script>
+  {% block extra_js %}{% endblock extra_js %}
 </body>
 </html>

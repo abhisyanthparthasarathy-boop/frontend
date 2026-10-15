@@ -45,15 +45,28 @@ python -m http.server 8000
 # Then visit http://localhost:8000 in your browser
 ```
 
+### Option 4: Running within Django
+1. Place `index.html` inside your app's `templates/` folder (e.g. `yourapp/templates/index.html` or `templates/index.html`).
+2. Place `style.css` and `script.js` inside your `static/` directory (e.g. `yourapp/static/style.css` and `yourapp/static/script.js`).
+3. Ensure `'django.contrib.staticfiles'` is in `INSTALLED_APPS` and `STATIC_URL = '/static/'` in `settings.py`.
+4. In `views.py`:
+   ```python
+   from django.shortcuts import render
+
+   def index(request):
+       return render(request, 'index.html')
+   ```
+5. `index.html` already includes `{% load static %}`, `{% csrf_token %}`, `<meta name="csrf-token">`, and `script.js` automatically passes the Django CSRF token with inference requests!
+
 ---
 
 ## 📁 Project Structure
 
 ```
 speculum - proejct/
-├── index.html       # Semantic, accessible HTML5 dashboard structure
+├── index.html       # Django-compatible HTML5 template (with {% load static %}, CSRF, and blocks)
 ├── style.css        # Editorial styling system, dark/light theme tokens, responsive layouts
-├── script.js        # Drag-and-drop, validation, theme persistence, and backend hooks
+├── script.js        # Drag-and-drop, validation, Django CSRF token handling, and backend hooks
 └── README.md        # Documentation and backend integration guide
 ```
 
